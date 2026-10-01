@@ -190,9 +190,8 @@ kubectl get gateway -n demo-app
 ### 1. Проверка веб-приложения (напрямую)
 
 ```powershell
-# в новом окне
 kubectl port-forward -n demo-app svc/web-app 8080:80
-# в первоначальном окне:
+# в другом окне:
 curl.exe http://localhost:8080
 # Hello World!
 ```
@@ -260,5 +259,6 @@ curl.exe http://localhost:30000/healthz
 - 🚧 Prometheus — в работе
 - 🚧 Fluent Bit + Loki — в работе
 - 🚧 Автоматизация — в работе
+```
 
 Последнее обновление: в процессе работы над кейсом.

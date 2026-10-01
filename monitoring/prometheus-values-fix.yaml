@@ -1,0 +1,24 @@
+﻿# --- Prometheus ---
+prometheus:
+  # ВАЖНО: service вне prometheusSpec (в v90+)
+  service:
+    type: NodePort
+    nodePort: 30001
+
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+    retention: 6h
+    retentionSize: "2GB"
+    walCompression: true

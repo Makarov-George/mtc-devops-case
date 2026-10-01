@@ -1,0 +1,87 @@
+﻿# Облегчённые значения kube-prometheus-stack для 8 GB RAM
+
+# --- Prometheus ---
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30001
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    retention: 6h
+    retentionSize: "2GB"
+    walCompression: true
+
+# --- Grafana ---
+grafana:
+  enabled: true
+  service:
+    type: NodePort
+    nodePort: 30002
+  adminPassword: "admin"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  plugins: []
+  persistence:
+    enabled: false
+  # Отключаем автоустановку плагинов (замедляет старт)
+  testFramework:
+    enabled: false
+  sidecar:
+    datasources:
+      defaultDatasourceEnabled: true
+    dashboards:
+      enabled: false
+
+# --- Alertmanager ---
+alertmanager:
+  enabled: false
+
+# --- Node Exporter ---
+nodeExporter:
+  enabled: true
+
+# --- Kube State Metrics ---
+kubeStateMetrics:
+  enabled: true
+
+# --- Prometheus Operator ---
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  admissionWebhooks:
+    enabled: false
+  tls:
+    enabled: false
+
+# --- Отключаем недоступное на kind ---
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+
+defaultRules:
+  create: true
