@@ -248,4 +248,17 @@ curl.exe http://localhost:30000/healthz
 
  * Автоматизация — TODO (будет добавлен Makefile + deploy.sh)
 
+```markdown
+## 📌 Текущий статус разработки
+
+Актуальное состояние проекта и список TODO — в файле [PROGRESS.md](PROGRESS.md).
+
+**Кратко:**
+- ✅ Kubernetes (kind v1.30.0)
+- ✅ nginx с Hello World
+- ✅ Gateway API (Envoy Gateway)
+- 🚧 Prometheus — в работе
+- 🚧 Fluent Bit + Loki — в работе
+- 🚧 Автоматизация — в работе
+
 Последнее обновление: в процессе работы над кейсом.
