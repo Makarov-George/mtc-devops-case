@@ -16,44 +16,34 @@
 
 ## 🏗 Архитектура
 
-Пользователь
-│ curl http://localhost:30000
-▼
-┌────────────────────────────────────────────────────┐
-│ Windows 10 (хост) │
-│ ┌──────────────────────────────────────────────┐ │
-│ │ Docker Desktop (WSL2) │ │
-│ │ ┌────────────────────────────────────────┐ │ │
-│ │ │ kind-кластер (mtc-cluster, v1.30.0) │ │ │
-│ │ │ │ │ │
-│ │ │ ┌──────────────────┐ │ │ │
-│ │ │ │ Envoy Gateway │ NodePort 30000 │ │ │
-│ │ │ │ (Gateway API) │ │ │ │
-│ │ │ └────────┬─────────┘ │ │ │
-│ │ │ │ │ │ │
-│ │ │ ▼ │ │ │
-│ │ │ ┌──────────────────┐ │ │ │
-│ │ │ │ HTTPRoute │ │ │ │
-│ │ │ │ / → web-app:80 │ │ │ │
-│ │ │ └────────┬─────────┘ │ │ │
-│ │ │ │ │ │ │
-│ │ │ ▼ │ │ │
-│ │ │ ┌──────────────────┐ │ │ │
-│ │ │ │ Service web-app │ │ │ │
-│ │ │ └────────┬─────────┘ │ │ │
-│ │ │ │ │ │ │
-│ │ │ ▼ │ │ │
-│ │ │ ┌──────────────────┐ │ │ │
-│ │ │ │ nginx (2 pods) │ Hello World! │ │ │
-│ │ │ │ access → stdout │ │ │ │
-│ │ │ └──────────────────┘ │ │ │
-│ │ └────────────────────────────────────────┘ │ │
-│ └──────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    User([👤 Пользователь])
+    
+    subgraph Host["Windows 10 / Ubuntu 24.04 (хост)"]
+        subgraph Docker["Docker Desktop (WSL2)"]
+            subgraph Kind["kind-кластер: mtc-cluster v1.30.0"]
+                Envoy["🚪 Envoy Gateway\n(Gateway API)\nNodePort 30000"]
+                Route["🔀 HTTPRoute\n/ → web-app:80"]
+                Svc["⚙️ Service web-app"]
+                App["📦 nginx × 2 pods\nHello World!\naccess → stdout"]
+                
+                Envoy --> Route --> Svc --> App
+            end
+        end
+    end
+    
+    User -->|"curl http://localhost:30000"| Envoy
+    App -.->|"access logs"| FluentBit["📋 Fluent Bit"]
+    FluentBit -.-> Loki["🗄️ Loki"]
+    Loki -.-> Grafana["📊 Grafana"]
+    
+    App -.->|"/nginx_status"| Prometheus["📈 Prometheus"]
+    Prometheus -.-> Grafana
+```
 
 **Поток запроса:**
-
-1. Пользователь → `http://localhost:30000` (проброшенный порт)
+1. Пользователь → `http://localhost:30000`
 2. kind → NodePort 30000 → под Envoy Proxy
 3. Envoy Proxy → HTTPRoute `web-app` (prefix `/`)
 4. HTTPRoute → Service `web-app:80`
