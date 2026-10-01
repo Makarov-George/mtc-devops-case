@@ -1,0 +1,18 @@
+﻿# Локальные файлы
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Секреты (не коммитить!)
+*.key
+*.pem
+.env
+secrets.yaml
+
+# Helm
+charts/*.tgz
+
+# Временные
+tmp/
+out/
